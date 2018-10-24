@@ -30,7 +30,7 @@ These take and return a string.
 Returns a composed (NFC), decomposed (NFD), compatibility composed (NFKC), or compatibility decomposed (NFKD) version of a string.
 
     utf8proc.decomp "á" --> "á" (U+00E1 -> U+0061 U+0301)
-    utf8proc.decomp "á" --> "á" (U+0061 U+0301 -> U+00E1)
+    utf8proc.comp "á" --> "á" (U+0061 U+0301 -> U+00E1)
 
 **`utf8proc.normalize(str, normalization)`**
 
