@@ -366,13 +366,9 @@ static int to_title (lua_State * L) {
 }
 
 static utf8proc_option_t get_options (lua_State * L, int arg, bool no_option_error) {
+	utf8proc_option_t options;
 #ifdef USE_BIT_OPTIONS
-	const lua_Integer options = luaL_checkinteger(L, arg);
-	if (no_option_error && options == 0)
-		return luaL_error(L, "no options were selected");
-	else if (!CHECK_OPTIONS(options))
-		return luaL_error(L, "invalid options");
-	return (utf8proc_option_t) options;
+	options = (utf8proc_option_t) luaL_checkinteger(L, arg); /* silently convert */
 #else
 	static const char * option_strings[] = {
 		"nullterm",
@@ -393,9 +389,8 @@ static utf8proc_option_t get_options (lua_State * L, int arg, bool no_option_err
 		NULL
 	};
 	// Make case-insensitive?
-	utf8proc_option_t option, options = 0;
 	for (int top = lua_gettop(L); arg <= top; ++arg) {
-		option = lua_case_insensitive_check_option(L, arg, NULL, option_strings);
+		utf8proc_option_t option = lua_case_insensitive_check_option(L, arg, NULL, option_strings);
 		if (option == ARRAY_LENGTH(option_strings) - 1)
 			option = UTF8PROC_NLF2LF;
 		else
@@ -407,9 +402,12 @@ static utf8proc_option_t get_options (lua_State * L, int arg, bool no_option_err
 		
 		options |= option;
 	}
-	if (!CHECK_OPTIONS(options)) luaL_error(L, "???");
-	return options;
 #endif // USE_BIT_OPTIONS
+	if (no_option_error && options == 0)
+		return luaL_error(L, "no options were selected");
+	else if (!CHECK_OPTIONS(options))
+		return luaL_error(L, "invalid options");
+	return options;
 }
 
 /*
