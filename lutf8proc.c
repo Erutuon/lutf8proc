@@ -25,6 +25,7 @@ typedef struct category_desc {
 } category_desc;
 
 // PropertyValueAliases.txt
+// The categories must be in the same order as in the enum in utf8proc.h!
 static const category_desc category_names[] = {
 	{ "Cn", "Other, not assigned" },
 	{ "Lu", "Letter, uppercase" },
@@ -565,7 +566,7 @@ static void push_utf8class (lua_State * L) {
 }
 
 static luaL_Reg funcs[] = {
-	{ "cat",           get_category      },
+	{ "cat",               get_category      },
 	{ "catdesc",           get_category_desc },
 	{ "decomp",            decompose         },
 	{ "comp",              compose           },
@@ -581,17 +582,20 @@ static luaL_Reg funcs[] = {
 	{ "map_custom",        lua_map_custom    },
 #ifdef USE_BIT_OPTIONS
 	{ "interpret_options", interpret_options },
-	{ "options",           push_options      },
 #endif // USE_BIT_OPTIONS
-	{ "categories",        push_category_map },
 	{ NULL,                NULL              }
 };
 
 int luaopen_lutf8proc (lua_State * L) {
 	luaL_newlib(L, funcs);
 	lua_pushstring(L, utf8proc_version()), lua_setfield(L, -2, "_VERSION");
-	push_utf8class(L);
-	lua_setfield(L, -2, "utf8class");
+#define PUSH_SETFIELD(what, name) push_##what(L), lua_setfield(L, -2, name)
+	PUSH_SETFIELD(utf8class, "utf8class");
+	PUSH_SETFIELD(category_map, "categories");
+#ifdef USE_BIT_OPTIONS
+	PUSH_SETFIELD(options, "options");
+#endif
+#undef PUSH_SETFIELD
 	return 1;
 }
 
