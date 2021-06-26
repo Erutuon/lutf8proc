@@ -56,7 +56,7 @@ end
 assert(utf8proc.cat 'a' == 'Ll')
 assert(utf8proc.catdesc 'a' == 'Letter, lowercase')
 
-local categories = utf8proc.categories()
+local categories = utf8proc.categories
 assert(categories.Ll == 'Letter, lowercase')
 assert(categories['Letter, lowercase'] == 'Ll')
 
@@ -92,9 +92,11 @@ assert_and_show('ǆ',  utf8proc.upper 'ǆ', 'Ǆ') -- '\u{1C6}' -> '\u{1C4}'
 print('to titlecase:')
 assert_and_show('ǆ',  utf8proc.title 'ǆ', 'ǅ') -- '\u{1C6}' -> '\u{1C5}'
 
-if options then -- bit-based options
+if options then -- bit-based options; not currently used
 	-- Check map.
 	print("bit-based options")
+
+	-- set bitflags as global variables
 	for name, option in pairs(type(options) == 'function' and options() or options) do
 		if type(name) == 'string' then _ENV[name] = option end
 	end
