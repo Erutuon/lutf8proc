@@ -1,21 +1,43 @@
-SO ?= so
-CFLAGS = -shared -fPIC -s -O2
+# To use bitflag options rather than string options
+# in map and map_custom:
+# make shared MYCFLAGS=-DUSE_BIT_OPTIONS
+
+PICFLAG = -fPIC
+DEFINES = -DUTF8PROC_STATIC
+LDFLAG_SHARED = -shared
+CFLAGS = -O2 $(MYCFLAGS) $(PICFLAG) $(DEFINES)
+
 LUA_DIR = /usr/local
 LUA_LIBDIR = $(LUA_DIR)/lib
 LUA_INCDIR = $(LUA_DIR)/include
 
-# The utf8proc shared library (utf8proc.dll or utf8proc.so)
-# must be in this directory.
-UTF8PROC_DIR = $(LUA_LIBDIR)
+LUA_VERSION ?= 5.3
+LUA_LIB = lua$(LUA_VERSION)
 
-# For instance, to use bitflag options rather than string options
-# in map and map_custom:
-# make shared MYCFLAGS=-DUSE_BIT_OPTIONS
-MYCFLAGS ?=
+UTF8PROC_DIR = utf8proc
+UTF8PROC_SRCDIR = $(UTF8PROC_DIR)
+UTF8PROC_INCDIR = $(UTF8PROC_DIR)
 
-UTF8PROC_LIB = lutf8proc.$(SO)
+SO = so
+UTF8PROC_LIB = lib/lutf8proc.$(SO)
+UTF8PROC_OBJ = obj/utf8proc.o
+LUTF8PROC_OBJ = obj/lutf8proc.o
 
-$(UTF8PROC_LIB): lutf8proc.c utf8proc.h
-	gcc $(CFLAGS) $(MYCFLAGS) -o $(UTF8PROC_LIB) lutf8proc.c -I$(LUA_INCDIR) \
-		-lutf8proc -L$(UTF8PROC_DIR) \
-		-llua5.3 -L$(LUA_LIBDIR)
+.PHONY: clean lib
+
+$(UTF8PROC_LIB): $(LUTF8PROC_OBJ) $(UTF8PROC_OBJ)
+	mkdir -p lib
+	gcc $(LDFLAGS) $(LDFLAG_SHARED) -o $@ $^ -l $(LUA_LIB) -L $(LUA_LIBDIR)
+
+$(LUTF8PROC_OBJ): lutf8proc.c $(UTF8PROC_INCDIR)/utf8proc.h
+	mkdir -p obj
+	gcc -c $(CFLAGS) -o $@ lutf8proc.c -I $(UTF8PROC_INCDIR) -I $(LUA_INCDIR)
+
+$(UTF8PROC_OBJ): $(UTF8PROC_INCDIR)/utf8proc.h $(UTF8PROC_SRCDIR)/utf8proc.c $(UTF8PROC_SRCDIR)/utf8proc_data.c
+	mkdir -p obj
+	gcc -c $(CFLAGS) -o $@ $(UTF8PROC_SRCDIR)/utf8proc.c
+
+lib: $(UTF8PROC_LIB)
+
+clean:
+	rm -f $(UTF8PROC_LIB) $(UTF8PROC_OBJ) $(LUTF8PROC_OBJ)
