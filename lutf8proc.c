@@ -115,8 +115,7 @@ static int lua_case_insensitive_check_option (lua_State * L, int arg,
 											  const char * const options[]) {
 	const char *name = (def)
 		? luaL_optstring(L, arg, def) : luaL_checkstring(L, arg);
-	int i;
-	for (i = 0; options[i]; i++)
+	for (size_t i = 0; options[i]; i++)
 		if (strcasecmp(options[i], name) == 0)
 			return i;
 	return luaL_argerror(L, arg,
@@ -367,7 +366,7 @@ static int to_title (lua_State * L) {
 }
 
 static utf8proc_option_t get_options (lua_State * L, int arg, bool no_option_error) {
-	utf8proc_option_t options;
+	utf8proc_option_t options = 0;
 #ifdef USE_BIT_OPTIONS
 	options = (utf8proc_option_t) luaL_checkinteger(L, arg); /* silently convert */
 #else
@@ -536,12 +535,12 @@ static int interpret_options (lua_State * L) {
 static int push_category_map (lua_State * L) {
 	lua_createtable(L, CATEGORY_COUNT, CATEGORY_COUNT * 2);
 	const category_desc * cat;
-	for (int i = 0; i < CATEGORY_COUNT; ++i) {
+	for (size_t i = 0; i < CATEGORY_COUNT; ++i) {
 		cat = &category_names[i];
 		LUA_SETTYPE(L, cat->code, cat->description, string); /* map[code] = description */
 		LUA_SETTYPE(L, cat->description, cat->code, string); /* map[description] = code */
 		lua_pushstring(L, cat->code);
-		lua_seti(L, -2, i + 1); /* map[index] = code */
+		lua_seti(L, -2, (lua_Integer) i + 1); /* map[index] = code */
 	}
 	return 1;
 }
@@ -559,9 +558,9 @@ static int push_options (lua_State * L) {
 
 static void push_utf8class (lua_State * L) {
 	lua_createtable(L, 255, 1);
-	for (lua_Integer i = 0; i < ARRAY_LENGTH(utf8proc_utf8class); ++i) {
+	for (size_t i = 0; i < ARRAY_LENGTH(utf8proc_utf8class); ++i) {
 		lua_pushinteger(L, utf8proc_utf8class[i]);
-		lua_rawseti(L, -2, i);
+		lua_rawseti(L, -2, (lua_Integer) i);
 	}
 }
 
