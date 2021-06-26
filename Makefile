@@ -27,11 +27,11 @@ LUTF8PROC_OBJ = obj/lutf8proc.o
 
 $(UTF8PROC_LIB): $(LUTF8PROC_OBJ) $(UTF8PROC_OBJ)
 	mkdir -p lib
-	gcc $(LDFLAGS) $(LDFLAG_SHARED) -o $@ $^ -l $(LUA_LIB) -L $(LUA_LIBDIR)
+	gcc $(LDFLAGS) $(LDFLAG_SHARED) -o $@ -l $(LUA_LIB) -L $(LUA_LIBDIR) $^
 
 $(LUTF8PROC_OBJ): lutf8proc.c $(UTF8PROC_INCDIR)/utf8proc.h
 	mkdir -p obj
-	gcc -c $(CFLAGS) -o $@ lutf8proc.c -I $(UTF8PROC_INCDIR) -I $(LUA_INCDIR)
+	gcc -c $(CFLAGS) -o $@ -I $(UTF8PROC_INCDIR) -I $(LUA_INCDIR) lutf8proc.c
 
 $(UTF8PROC_OBJ): $(UTF8PROC_INCDIR)/utf8proc.h $(UTF8PROC_SRCDIR)/utf8proc.c $(UTF8PROC_SRCDIR)/utf8proc_data.c
 	mkdir -p obj

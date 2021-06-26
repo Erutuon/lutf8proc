@@ -540,7 +540,7 @@ static int push_category_map (lua_State * L) {
 		LUA_SETTYPE(L, cat->code, cat->description, string); /* map[code] = description */
 		LUA_SETTYPE(L, cat->description, cat->code, string); /* map[description] = code */
 		lua_pushstring(L, cat->code);
-		lua_seti(L, -2, (lua_Integer) i + 1); /* map[index] = code */
+		lua_rawseti(L, -2, (lua_Integer) i + 1); /* map[index] = code */
 	}
 	return 1;
 }
