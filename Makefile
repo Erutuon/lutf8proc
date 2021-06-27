@@ -19,14 +19,15 @@ UTF8PROC_SRCDIR = $(UTF8PROC_DIR)
 UTF8PROC_INCDIR = $(UTF8PROC_DIR)
 
 SO = so
-UTF8PROC_LIB = lib/lutf8proc.$(SO)
+LUTF8PROC_LIBDIR = lib
+LUTF8PROC_LIB = $(LUTF8PROC_LIBDIR)/lutf8proc.$(SO)
 UTF8PROC_OBJ = obj/utf8proc.o
 LUTF8PROC_OBJ = obj/lutf8proc.o
 
-.PHONY: clean lib
+.PHONY: clean lib test
 
-$(UTF8PROC_LIB): $(LUTF8PROC_OBJ) $(UTF8PROC_OBJ)
-	mkdir -p lib
+$(LUTF8PROC_LIB): $(LUTF8PROC_OBJ) $(UTF8PROC_OBJ)
+	mkdir -p $(LUTF8PROC_LIBDIR)
 	gcc $(LDFLAGS) $(LDFLAG_SHARED) -o $@ -l $(LUA_LIB) -L $(LUA_LIBDIR) $^
 
 $(LUTF8PROC_OBJ): lutf8proc.c $(UTF8PROC_INCDIR)/utf8proc.h
@@ -37,7 +38,10 @@ $(UTF8PROC_OBJ): $(UTF8PROC_INCDIR)/utf8proc.h $(UTF8PROC_SRCDIR)/utf8proc.c $(U
 	mkdir -p obj
 	gcc -c $(CFLAGS) -o $@ $(UTF8PROC_SRCDIR)/utf8proc.c
 
-lib: $(UTF8PROC_LIB)
+test: $(LUTF8PROC_LIB)
+	lua -e 'package.cpath = "$(LUTF8PROC_LIBDIR)/?.so"' testcases.lua
+
+lib: $(LUTF8PROC_LIB)
 
 clean:
-	rm -f $(UTF8PROC_LIB) $(UTF8PROC_OBJ) $(LUTF8PROC_OBJ)
+	rm -f $(LUTF8PROC_LIB) $(UTF8PROC_OBJ) $(LUTF8PROC_OBJ)
