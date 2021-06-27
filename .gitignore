@@ -1,13 +1,6 @@
 # Output of testcases
 tests.txt
 
-# Compile script
-testit.bat
-
-# Old versions
-lutf8proc_old.c
-test.c
-
 # Compiled Lua sources
 luac.out
 
@@ -48,4 +41,3 @@ luac.out
 *.i*86
 *.x86_64
 *.hex
-
