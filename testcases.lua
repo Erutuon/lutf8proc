@@ -1,3 +1,5 @@
+-- These testcases can only be parsed by Lua 5.3 and greater because of the bitwise operators.
+
 utf8proc = require 'lutf8proc'
 local options = utf8proc.options
 

@@ -2,8 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "lua.h"
-#include "lauxlib.h"
+#include "compat-5.3.h"
 #include "utf8proc.h"
 
 // Use bit options in map and map_custom.

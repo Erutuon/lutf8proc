@@ -7,7 +7,7 @@ DEFINES = -DUTF8PROC_STATIC
 LDFLAG_SHARED = -shared
 CFLAGS = -O2 $(MYCFLAGS) $(PICFLAG) $(DEFINES)
 
-LUA_DIR = /usr/local
+LUA_DIR ?= /usr/local
 LUA_LIBDIR = $(LUA_DIR)/lib
 LUA_INCDIR = $(LUA_DIR)/include
 
